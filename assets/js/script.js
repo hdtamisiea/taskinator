@@ -43,8 +43,7 @@ var createTaskEl = function (taskDataObj) {
     var listItemEl = document.createElement("li");
     listItemEl.className = "task-item";
     listItemEl.setAttribute("data-task-id", taskIdCounter);
-    console.log(taskDataObj);
-    console.log(taskDataObj.status);
+    
     var taskInfoEl = document.createElement("div");
     taskInfoEl.className = "task-info";
     taskInfoEl.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
@@ -58,6 +57,7 @@ var createTaskEl = function (taskDataObj) {
     taskDataObj.id = taskIdCounter;
 
     tasks.push(taskDataObj);
+    saveTasks();
 
     // increase task counter for next unique id
     taskIdCounter++;
@@ -116,6 +116,8 @@ var completeEditTask = function (taskName, taskType, taskId) {
             tasks[i].name = taskName;
             tasks[i].type = taskType;
         }
+
+        saveTasks();
     };
 
     alert("Task Updated!");
@@ -138,7 +140,7 @@ var taskButtonHandler = function (event) {
         console.log("delete", targetEl);
         var taskId = targetEl.getAttribute("data-task-id");
         deleteTask(taskId);
-        
+
         // create new array to hold updated list of tasks
         var updatedTaskArr = [];
 
@@ -156,7 +158,6 @@ var taskButtonHandler = function (event) {
 };
 
 var taskStatusChangeHandler = function (event) {
-    console.log(event.target.value);
 
     // find task list item based on event.target's data-task-id attribute
     var taskId = event.target.getAttribute("data-task-id");
@@ -179,7 +180,8 @@ var taskStatusChangeHandler = function (event) {
             tasks[i].status = statusValue;
         }
     }
-    console.log(tasks);
+    // console.log(tasks);
+    saveTasks();
 };
 
 var editTask = function (taskId) {
@@ -210,7 +212,12 @@ var deleteTask = function (taskId) {
     // find task list element with taskId value and remove it
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
     taskSelected.remove();
+    saveTasks();
 };
+
+var saveTasks = function() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
 
 // Create a new task
 formEl.addEventListener("submit", taskFormHandler);
